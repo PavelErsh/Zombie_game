@@ -3,13 +3,13 @@ import arcade
 # устанавливаем константы
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Star Wars"
+SCREEN_TITLE = "Star Wars"\
 
 class Bullet(arcade.Sprite):
     def __init__(self):
-        super(Bullet, self).__init__("img//bullet.png")
+        super(Bullet, self).__init__("img//bullet.png", 0.8)
         self.change_y = 10
-        self.laser_sound = arcade.load_sound("soud//sound.wav")
+        self.bullet_sound = arcade.load_sound("soud//sound.wav")
 
     def update(self):
         self.center_y += self.change_y
@@ -29,8 +29,6 @@ class MyGame(arcade.Window):
         self.player = Player("img//player.png", 0.5)
         self.bullets = arcade.SpriteList()
 
-        self.set_mouse_visible(False)
-
 
     # начальные значения
     def setup(self):
@@ -43,10 +41,9 @@ class MyGame(arcade.Window):
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         bullet = Bullet()
-        bullet.bottom = self.player.top
         bullet.center_x = self.player.center_x
+        bullet.bottom= self.player.top
         self.bullets.append(bullet)
-
 
     # отрисовка
     def on_draw(self):
@@ -55,7 +52,6 @@ class MyGame(arcade.Window):
         arcade.draw_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, self.background )
         self.player.draw()
         self.bullets.draw()
-
     # игровая логика
     def update(self, delta_time):
         self.player.update()
