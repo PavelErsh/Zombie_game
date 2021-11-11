@@ -19,11 +19,17 @@ class MyGame(arcade.Window):
         self.background = arcade.load_texture("img//bacground.png")
         self.player = Player("img//player.png", 0.5)
 
+        self.set_mouse_visible(False)
+
 
     # начальные значения
     def setup(self):
         self.player.center_x = SCREEN_WIDTH / 2
         self.player.center_y = 70
+        self.player.angle = 100
+
+    def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
+        self.player.center_x = x
 
     # отрисовка
     def on_draw(self):
