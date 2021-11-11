@@ -1,5 +1,4 @@
 import random
-
 import arcade
 
 # устанавливаем константы
@@ -18,6 +17,9 @@ class Zombie(arcade.AnimatedTimeSprite):
 
     def update(self):
         self.center_y -= self.change_y
+        if self.center_y < 0:
+            window.fails += 1
+            self.kill()
 
 class Bullet(arcade.Sprite):
     def __init__(self):
@@ -45,6 +47,8 @@ class MyGame(arcade.Window):
         self.player = Player("img//player.png", 0.5)
         self.bullets = arcade.SpriteList()
         self.zombies = arcade.SpriteList()
+        self.score = 0
+        self.fails = 0
         self.set_mouse_visible(False)
 
 
@@ -78,14 +82,21 @@ class MyGame(arcade.Window):
         self.player.draw()
         self.bullets.draw()
         self.zombies.draw()
+        arcade.draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
+
+        arcade.draw_text(f"Fails: {self.fails}", 710, 20, arcade.color.WHITE, 14)
     # игровая логика
     def update(self, delta_time):
         self.player.update()
         self.bullets.update()
 
         for bullet in self.bullets:
-            if bullet.bottom > SCREEN_HEIGHT:
+            hit_list = arcade.check_for_collision_with_list(bullet, self.zombies)
+            if len(hit_list) > 0:
                 bullet.kill()
+                self.score += 1
+                for enemy in hit_list:
+                    enemy.kill()
 
         self.zombies.update_animation()
         self.zombies.update()
