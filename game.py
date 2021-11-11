@@ -49,6 +49,7 @@ class MyGame(arcade.Window):
         self.zombies = arcade.SpriteList()
         self.score = 0
         self.fails = 0
+        self.move = True
         self.set_mouse_visible(False)
 
 
@@ -66,13 +67,16 @@ class MyGame(arcade.Window):
             self.zombies.append(zombie)
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
-        self.player.center_x = x
+        if self.move == True:
+            self.player.center_x = x
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         bullet = Bullet()
         bullet.center_x = self.player.center_x
         bullet.bottom= self.player.top
+        arcade.play_sound(bullet.bullet_sound)
         self.bullets.append(bullet)
+
 
     # отрисовка
     def on_draw(self):
@@ -83,12 +87,16 @@ class MyGame(arcade.Window):
         self.bullets.draw()
         self.zombies.draw()
         arcade.draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
-
         arcade.draw_text(f"Fails: {self.fails}", 710, 20, arcade.color.WHITE, 14)
+        if self.move == False:
+            arcade.draw_text(f"you lose", SCREEN_HEIGHT / 2, SCREEN_WIDTH/ 2, arcade.color.RED, 30)
     # игровая логика
     def update(self, delta_time):
-        self.player.update()
-        self.bullets.update()
+        if self.move == True:
+            self.player.update()
+            self.bullets.update()
+            self.zombies.update_animation()
+            self.zombies.update()
 
         for bullet in self.bullets:
             hit_list = arcade.check_for_collision_with_list(bullet, self.zombies)
@@ -97,9 +105,8 @@ class MyGame(arcade.Window):
                 self.score += 1
                 for enemy in hit_list:
                     enemy.kill()
-
-        self.zombies.update_animation()
-        self.zombies.update()
+        if arcade.check_for_collision_with_list(self.player, self.zombies):
+            self.move = False
 
 
 window = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
