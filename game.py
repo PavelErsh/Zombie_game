@@ -1,6 +1,7 @@
 import random
 import arcade
 #hello
+#test
 # устанавливаем константы
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
